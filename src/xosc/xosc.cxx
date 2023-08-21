@@ -1384,15 +1384,19 @@ Event::Event(pugi::xml_node node)
     {
         m_Actions.push_back(std::make_shared<Action>(e_Action));
     }
-    if (node.child("StartTrigger")) { m_StartTrigger = std::make_shared<Trigger>(node.child("StartTrigger")); }  
+    if (node.child("StartTrigger")) { m_StartTrigger = std::make_shared<Trigger>(node.child("StartTrigger")); }
+	if (node.child("StopTrigger")) { m_StopTrigger= std::make_shared<Trigger>(node.child("StopTrigger")); }
+
 }
 void Event::save(pugi::xml_node node)
 {
-    maximumExecutionCount.save(node.append_attribute("maximumExecutionCount")); 
-    name.save(node.append_attribute("name")); 
-    priority.save(node.append_attribute("priority")); 
-    for (std::shared_ptr<Action> m_Action : m_Actions ){ m_Action->save(node.append_child("Action")); } 
-    if (m_StartTrigger ) { m_StartTrigger->save(node.append_child("StartTrigger")); }   
+    maximumExecutionCount.save(node.append_attribute("maximumExecutionCount"));
+    name.save(node.append_attribute("name"));
+    priority.save(node.append_attribute("priority"));
+    for (std::shared_ptr<Action> m_Action : m_Actions ){ m_Action->save(node.append_child("Action")); }
+    if (m_StartTrigger ) { m_StartTrigger->save(node.append_child("StartTrigger")); }
+	if (m_StopTrigger ) { m_StopTrigger->save(node.append_child("StopTrigger")); }
+
 }
 ExternalObjectReference::ExternalObjectReference(pugi::xml_node node) 
 {
@@ -3412,30 +3416,48 @@ void StochasticDistributionType::save(pugi::xml_node node)
 xosc::xosc()
 {
 }
-void xosc::load(std::string xoscfilename )
+void xosc::load_file(std::string xoscfilename)
 {
     bool status = m_doc.load_file(xoscfilename.c_str());
     if (status)
     {
-        std::cout << "Loaded XML File : " << xoscfilename.c_str()<<"\n";
+        std::cout << "{xosc::load_file} : Loaded scenario : " << xoscfilename;
     }
     else
     {
-        std::cout << " Failed to load xml definition file .. " << xoscfilename.c_str() <<"\n";
+		std::cerr << "{xosc::load_file} : Failed to load xml definition file : " << xoscfilename.c_str();
         return;
     }
     m_root = m_doc.root();
+
+}
+
+
+void xosc::load_string(const char* source)
+{
+    bool status = m_doc.load_string(source);
+    if (status)
+    {
+		std::cout << "{xosc::load_file} : Loaded XML File : ";
+    }
+    else
+    {
+		std::cerr << "{xosc::load_file} : Failed to load xml definition file : ";
+        throw std::runtime_error("{xosc::load_file} : Failed to load xml definition file.");
+    }
+    m_root = m_doc.root();
+
 }
 void xosc::parse()
 {
     try {
         m_OpenSCENARIO = std::make_shared<OpenSCENARIO>(m_root.child("OpenSCENARIO"));
-        std::cout << "OpenSCENARIO parse successfully " << m_OpenSCENARIO<< std::endl;
+        std::cout << "{xosc::parse} : OpenSCENARIO parse successfully ";
     }
     catch (std::exception &e)
     {
-        std::cout << "ERROR :Exception .. " << e.what() << std::endl;
-    }
+		std::cerr << "{xosc::parse} : Exception " << e.what();
+	}
 }
 void xosc::save(std::string filename)
 {

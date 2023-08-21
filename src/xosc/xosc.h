@@ -2178,6 +2178,8 @@ public:
     Priority	    priority; //  required 
     std::vector<std::shared_ptr<Action>>                 m_Actions; //xs:element
     std::shared_ptr<Trigger>                 m_StartTrigger; //xs:element
+	std::shared_ptr<Trigger>                 m_StopTrigger; //xs:element
+
 };
 struct  ExternalObjectReference   
 {
@@ -4595,7 +4597,8 @@ private:
 public:
     std::shared_ptr<OpenSCENARIO>    m_OpenSCENARIO;
 public:
-    void load(std::string xoscfilename);
+    void load_file(std::string xoscfilename);
+    void load_string(const char* source);
     void parse();
     void save(std::string filename);
 public:
