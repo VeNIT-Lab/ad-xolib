@@ -9,7 +9,8 @@
 //
 #ifndef _OPENSCENARIO_V1_1_1_H_
 #define _OPENSCENARIO_V1_1_1_H_
-#pragma once 
+#pragma once
+#include <cstdint>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
